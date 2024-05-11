@@ -54,9 +54,8 @@ class APISettings {
     this.APP_PORT = this.getNumberOrDefault(envVariables.APP_PORT as string, 3000);
 
     // Database
-    // 'mongodb+srv://docummagic0:481516Lost@cluster0.sfhnzph.mongodb.net/';
     this.MONGO_CONNECTION_URI =
-      envVariables.MONGO_CONNECTION_URI ?? 'mongodb://localhost:27017'
+      envVariables.MONGO_CONNECTION_URI ?? 'mongodb+srv://docummagic0:481516Lost@cluster0.sfhnzph.mongodb.net/';
     this.MONGO_CONNECTION_URI_FOR_TESTS =
       envVariables.MONGO_CONNECTION_URI_FOR_TESTS ?? 'mongodb://localhost:27017';
   }
