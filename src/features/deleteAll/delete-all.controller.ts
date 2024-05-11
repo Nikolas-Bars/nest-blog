@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Delete, HttpCode, Post } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Blog } from '../blogs/domain/blog.entity';
@@ -11,7 +11,8 @@ export class DeleteAllController {
     @InjectModel('User') private readonly userModel: Model<User>,
   ) {}
 
-  @Post('all-data')
+  @HttpCode(204)
+  @Delete('all-data')
   async deleteAllData() {
 
       // Удаление всех данных из модели BlogModel
@@ -20,6 +21,6 @@ export class DeleteAllController {
       // Удаление всех данных из модели UserModel
       await this.userModel.deleteMany({});
 
-      return { message: 'All data deleted successfully' };
+      return;
   }
 }
