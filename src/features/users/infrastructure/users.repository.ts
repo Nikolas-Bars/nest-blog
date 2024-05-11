@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User, UserDocument } from '../domain/user.entity';
+import { User } from '../domain/user.entity';
 
 @Injectable()
 export class UsersRepository {
@@ -12,6 +12,7 @@ export class UsersRepository {
     name: string;
     createdAt: string;
   }) {
+    console.log(5);
     const result = await this.userModel.insertMany(user);
     return result[0];
   }

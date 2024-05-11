@@ -51,11 +51,12 @@ class APISettings {
 
   constructor(private readonly envVariables: EnvironmentVariable) {
     // Application
-    this.APP_PORT = this.getNumberOrDefault(envVariables.APP_PORT as string, 7840);
+    this.APP_PORT = this.getNumberOrDefault(envVariables.APP_PORT as string, 3000);
 
     // Database
+    // 'mongodb+srv://docummagic0:481516Lost@cluster0.sfhnzph.mongodb.net/';
     this.MONGO_CONNECTION_URI =
-      envVariables.MONGO_CONNECTION_URI ?? 'mongodb+srv://docummagic0:481516Lost@cluster0.sfhnzph.mongodb.net/';
+      envVariables.MONGO_CONNECTION_URI ?? 'mongodb://localhost:27017'
     this.MONGO_CONNECTION_URI_FOR_TESTS =
       envVariables.MONGO_CONNECTION_URI_FOR_TESTS ?? 'mongodb://localhost:27017';
   }
