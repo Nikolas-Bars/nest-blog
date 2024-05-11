@@ -18,6 +18,7 @@ import { BlogsService } from './features/blogs/application/blogs.service';
 import { BlogsQueryRepository } from './features/blogs/infrastructure/blogs.query-repository';
 import { BlogsController } from './features/blogs/api/blogs.controller';
 import { Blog, BlogSchema } from './features/blogs/domain/blog.entity';
+import { DeleteAllController } from './features/deleteAll/delete-all.controller';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -69,7 +70,7 @@ const blogsProviders: Provider[] = [
         }*/
   ],
   // Регистрация контроллеров
-  controllers: [UsersController, BlogsController],
+  controllers: [UsersController, BlogsController, DeleteAllController],
 })
 export class AppModule implements NestModule {
   // https://docs.nestjs.com/middleware#applying-middleware
