@@ -1,5 +1,5 @@
 import { ApiTags } from '@nestjs/swagger';
-import { Body, Controller, Get, NotFoundException, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, Post, Put, Query } from '@nestjs/common';
 import { BlogsService } from '../application/blogs.service';
 import { BlogsQueryRepository, SortDataType } from '../infrastructure/blogs.query-repository';
 import { BlogCreateModel } from './models/input/create-blog.input.model';
@@ -58,6 +58,30 @@ export class BlogsController {
     }
 
     return blog
+  }
+
+  @Put(':id')
+  @HttpCode(204)
+  async updateBlog(
+    @Body() updateModel: BlogCreateModel,
+    @Param('id') id: string
+  ) {
+    await this.blogService.update(
+      id,
+      updateModel.name,
+      updateModel.description,
+      updateModel.websiteUrl,
+    )
+    return
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  async deleteBlog(
+    @Param('id') id: string
+  ) {
+    await this.blogService.delete(id)
+    return
   }
 
 }
