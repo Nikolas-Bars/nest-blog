@@ -24,7 +24,6 @@ export class BlogsController {
   async getBlog(
     @Param('id') id: string
   ) {
-    console.log('aaaaa');
     return this.blogQueryRepository.getBlogById(id)
   }
 
