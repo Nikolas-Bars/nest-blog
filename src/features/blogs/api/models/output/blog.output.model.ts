@@ -7,7 +7,7 @@ export class BlogOutputModel {
   description: string;
   websiteUrl: string;
   createdAt: Date;
-  isMemberShip: boolean;
+  isMembership: boolean;
 }
 
 // MAPPERS
@@ -20,7 +20,7 @@ export const BlogOutputModelMapper = (blog: BlogDocument): BlogOutputModel => {
   outputModel.createdAt = blog.createdAt
   outputModel.description = blog.description;
   outputModel.websiteUrl = blog.websiteUrl;
-  outputModel.isMemberShip = blog.isMemberShip;
+  outputModel.isMembership = blog.isMembership;
 
   return outputModel;
 };

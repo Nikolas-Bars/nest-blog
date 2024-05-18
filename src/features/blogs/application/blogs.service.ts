@@ -12,7 +12,7 @@ export class BlogsService {
     const result = await this.blogsRepositiry.insert({
       description,
       name,
-      isMemberShip: false,
+      isMembership: false,
       websiteUrl,
       createdAt: (new Date()).toISOString(),
     })

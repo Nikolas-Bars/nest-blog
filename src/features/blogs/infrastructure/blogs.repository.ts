@@ -11,7 +11,7 @@ export class BlogsRepository {
     name: string;
     description: string;
     websiteUrl: string;
-    isMemberShip: boolean;
+    isMembership: boolean;
     createdAt: string;
   }) {
     const result = await this.blogModel.insertMany(blog)

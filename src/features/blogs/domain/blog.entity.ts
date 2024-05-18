@@ -17,7 +17,7 @@ export class Blog {
   websiteUrl: string
 
   @Prop()
-  isMemberShip: boolean
+  isMembership: boolean
 
   @Prop()
   createdAt: Date
