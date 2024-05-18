@@ -41,7 +41,7 @@ export class PostsQueryRepository {
     if (sortBy && sortDirection) {
       sortOptions[sortBy] = sortDirection as SortOrder;
     }
-    const blogs = await this.postModel
+    const posts = await this.postModel
       // ищем элементы с параметрами из объекта filter
       .find(filter)
       // указываем как сортировать результаты - по умолчанию по дате создания
@@ -57,7 +57,7 @@ export class PostsQueryRepository {
 
     const pagesCount = Math.ceil(totalCount / pageSize)
 
-    if(blogs === null) {
+    if(posts === null) {
       return null
     }
 
@@ -66,11 +66,48 @@ export class PostsQueryRepository {
       page: pageNumber,
       pageSize,
       totalCount,
-      items: blogs.map((blog) => {
-        return PostOutputModelMapper(blog)
+      items: posts.map((post) => {
+        return PostOutputModelMapper(post)
       })
     } as PaginationType<PostOutputModel>
 
   }
 
+  public async getPostsByBlogId(blogId: string, queryData: QueryPostDataType): Promise<PaginationType<PostOutputModel> | null> {
+
+      const {pageNumber, pageSize, sortBy, sortDirection} = queryData
+
+      let sortOptions: {[p: string]: SortOrder | {$meta: any}} | [string, SortOrder][] | undefined | null | string = {};
+
+      if (sortBy && sortDirection) {
+        sortOptions[sortBy] = sortDirection as SortOrder;
+      }
+    console.log(blogId, 'blogId epta');
+      const posts = await this.postModel
+        .find({ blogId: blogId })
+        .sort(sortOptions)
+        .limit(pageSize)
+        .skip((pageNumber - 1) * pageSize)
+
+    console.log(posts, 'posts epta');
+      const totalCount = await this.postModel.countDocuments({blogId: blogId})
+
+      const pagesCount = Math.ceil(totalCount / pageSize)
+
+      if (posts.length) {
+
+        return {
+          pagesCount: pagesCount,
+          page: pageNumber,
+          pageSize: pageSize,
+          totalCount: totalCount,
+          items: posts.map((post) => {
+            return PostOutputModelMapper(post)
+          })
+        } as PaginationType<PostOutputModel>
+      } else {
+        return null
+      }
+
+  }
 }
