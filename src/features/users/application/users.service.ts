@@ -6,16 +6,20 @@ import { UsersRepository } from '../infrastructure/users.repository';
 export class UsersService {
   constructor(private usersRepository: UsersRepository) {}
 
-  async create(email: string, name: string) {
+  async create(email: string, login: string, password: string) {
     const result = await this.usersRepository.insert({
       email,
-      name,
+      login,
+      password,
       createdAt: new Date().toISOString(),
     });
 
-    await this.sendMessageOnEmail(email);
+    // await this.sendMessageOnEmail(email);
 
     return result._id.toString();
+  }
+  async deleteUser(id) {
+    return await this.usersRepository.delete(id)
   }
 
   sendMessageOnEmail(email: string) {

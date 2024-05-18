@@ -20,6 +20,7 @@ import { UsersService } from '../application/users.service';
 import { NumberPipe } from '../../../common/pipes/number.pipe';
 import { AuthGuard } from '../../../common/guards/auth.guard';
 import { Request, Response } from 'express';
+import { QueryUserDataType } from './models/types/users-types';
 
 // Tag для swagger
 @ApiTags('Users')
@@ -35,30 +36,17 @@ export class UsersController {
     this.usersService = usersService;
   }
 
-  @Get()
-  async hello(
-    // Для работы с query применяя наш кастомный pipe
-    @Query('id', NumberPipe) id: number,
-    // Для работы с request (импорт Request из express)
-    @Req() req: Request,
-    // Для работы с response (импорт Response из express)
-    // При работе с данным декоратором необходимо установить passthrough: true
-    // чтобы работал механизм возврата ответа с помощью return data; или res.json(data)
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    return 'Hello';
-  }
-
   @Post()
   // Для переопределения default статус кода https://docs.nestjs.com/controllers#status-code
-  @HttpCode(200)
+  @HttpCode(201)
   async create(@Body() createModel: UserCreateModel): Promise<UserOutputModel> {
     const result = await this.usersService.create(
       createModel.email,
-      createModel.name,
+      createModel.login,
+      createModel.password
     );
 
-    const user =  await this.usersQueryRepository.getById(result);
+    const user = await this.usersQueryRepository.getById(result);
 
     if(user === null){
       throw new NotFoundException('User not found');
@@ -67,19 +55,30 @@ export class UsersController {
     return user;
   }
 
-  // :id в декораторе говорит nest о том что это параметр
-  // Можно прочитать с помощью @Param("id") и передать в property такое же название параметра
-  // Если property не указать, то вернется объект @Param()
-  @Delete(':id')
-  // Установка guard на данный роут
-  @UseGuards(AuthGuard)
-  // Pipes из коробки https://docs.nestjs.com/pipes#built-in-pipes
-  async delete(@Param('id', ParseIntPipe) id: number) {
-    return id;
+  @Get()
+  async getUsers(@Query() query: QueryUserDataType ) {
+    const sortData = {
+      sortBy: query.sortBy ?? 'createdAt',
+      sortDirection: query.sortDirection ? query.sortDirection : 'desc',
+      pageNumber: query.pageNumber ? +query.pageNumber : 1,
+      pageSize: query.pageSize ? +query.pageSize : 10,
+      searchLoginTerm: query.searchLoginTerm ? query.searchLoginTerm : null,
+      searchEmailTerm: query.searchEmailTerm ? query.searchEmailTerm : null,
+    }
+    return await this.usersQueryRepository.getUsers(sortData)
   }
 
-  @Get(':id')
-  async findUser(@Param('id') id: string) {
-    return this.usersQueryRepository.getById(id);
+  @Delete(':id')
+  @HttpCode(204)
+  async deletePost(
+    @Param('id') id: string
+  ) {
+    const result = await this.usersService.deleteUser(id)
+
+    if(!result){
+      throw new NotFoundException('Post not found');
+    }
+
+    return
   }
 }
