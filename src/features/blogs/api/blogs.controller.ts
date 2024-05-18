@@ -145,7 +145,11 @@ export class BlogsController {
   async deleteBlog(
     @Param('id') id: string
   ) {
-    await this.blogService.delete(id)
+    const result = await this.blogService.delete(id)
+    if (!result) {
+      throw new NotFoundException('Blog not found')
+    }
+
     return
   }
 
