@@ -1,6 +1,5 @@
 import { Trim } from '../../../../../common/decorators/transform/trim';
-import { IsString, Length, Matches } from 'class-validator';
-import { NameIsExist } from '../../../../../common/decorators/validate/name-is-exist.decorator';
+import { IsString, Length } from 'class-validator';
 
 export class CreatePostInputModel {
   @Trim()

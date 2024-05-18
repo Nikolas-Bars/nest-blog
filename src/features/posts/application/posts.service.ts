@@ -3,6 +3,7 @@ import { PostsRepository } from '../infrastructure/posts.repository';
 import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
 import { BlogsQueryRepository } from '../../blogs/infrastructure/blogs.query-repository';
 import { BlogOutputModel } from '../../blogs/api/models/output/blog.output.model';
+import { UpdatePostData } from '../api/models/input/update-post';
 
 @Injectable()
 export class PostsService {
@@ -27,6 +28,18 @@ export class PostsService {
   async isBlogExist(blogId: string): Promise<BlogOutputModel | null> {
 
     return await this.blogsRepository.getBlogById(blogId)
+
+  }
+
+  async updatePost(data: UpdatePostData): Promise<boolean> {
+
+    return await this.postsRepository.update(data)
+
+  }
+
+  async deletePost(id): Promise<boolean> {
+
+    return await this.postsRepository.delete(id)
 
   }
 }

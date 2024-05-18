@@ -5,3 +5,8 @@ export type PaginationType<I> = {
   totalCount: number,
   items: I[]
 }
+
+export type DeleteResult = {
+  acknowledged: boolean;
+  deletedCount: number;
+}

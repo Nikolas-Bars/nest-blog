@@ -2,8 +2,7 @@ import { ApiTags } from '@nestjs/swagger';
 import {
   BadRequestException,
   Body,
-  Controller,
-  Delete,
+  Controller, Delete,
   Get,
   HttpCode,
   NotFoundException,
@@ -17,7 +16,6 @@ import { PostsQueryRepository, QueryPostDataType } from '../infrastructure/posts
 import { PostOutputModel } from './models/output/post.output.model';
 import { CreatePostInputModel } from './models/input/create-post.input.model';
 import { BlogOutputModel } from '../../blogs/api/models/output/blog.output.model';
-import { SortDataType } from '../../blogs/infrastructure/blogs.query-repository';
 
 @ApiTags('Posts')
 @Controller('Posts')
@@ -27,6 +25,20 @@ export class PostsController {
     private readonly postService: PostsService,
     private readonly postsQueryRepository: PostsQueryRepository
   ) {}
+
+
+  @Get(':id')
+  async getPost(@Param('id') id: string) {
+
+    const post = await this.postsQueryRepository.getPostById(id)
+
+    if(post === null){
+      throw new NotFoundException('Post not found');
+    } else {
+      return post
+    }
+
+  }
 
   @Get()
   async getPosts(@Query() query: QueryPostDataType) {
@@ -64,5 +76,44 @@ export class PostsController {
       return post
     }
   }
+
+  @Put(':id')
+  @HttpCode(204)
+  async updatePost(@Body() updateModel: CreatePostInputModel, @Param('id') id: string) {
+    const post = await this.postsQueryRepository.getPostById(id)
+
+    if(post === null){
+      throw new NotFoundException('Post not found');
+    }
+
+    const  result = await this.postService.updatePost({
+      id,
+      title: updateModel.title,
+      blogId: updateModel.blogId,
+      content: updateModel.content,
+      shortDescription: updateModel.shortDescription})
+
+    if(!result){
+      throw new NotFoundException('Post not found');
+    }
+
+    return
+
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  async deletePost(
+    @Param('id') id: string
+  ) {
+    const result = await this.postService.deletePost(id)
+
+    if(!result){
+      throw new NotFoundException('Post not found');
+    }
+
+    return
+  }
+
 
 }

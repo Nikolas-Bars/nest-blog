@@ -24,7 +24,14 @@ export class BlogsController {
   async getBlog(
     @Param('id') id: string
   ) {
-    return this.blogQueryRepository.getBlogById(id)
+
+    const blog = await this.blogQueryRepository.getBlogById(id)
+    if(blog === null) {
+      throw new NotFoundException('Blog not found')
+    } else {
+      return blog
+    }
+
   }
 
   @Get('')
@@ -65,12 +72,17 @@ export class BlogsController {
     @Body() updateModel: BlogCreateModel,
     @Param('id') id: string
   ) {
-    await this.blogService.update(
+    const result = await this.blogService.update(
       id,
       updateModel.name,
       updateModel.description,
       updateModel.websiteUrl,
     )
+
+    if(!result){
+      throw new NotFoundException('Post not found');
+    }
+
     return
   }
 
