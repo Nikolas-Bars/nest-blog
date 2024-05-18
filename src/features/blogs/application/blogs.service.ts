@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { BlogsRepository } from '../infrastructure/blogs.repository';
 import { Schema, Types, ObjectId } from 'mongoose';
+import { PostsRepository } from '../../posts/infrastructure/posts.repository';
 
 @Injectable()
 export class BlogsService {
-  constructor(private blogsRepositiry: BlogsRepository) {}
+  constructor(
+    private blogsRepositiry: BlogsRepository,
+    private postRepository: PostsRepository
+    ) {}
 
   async create(name: string, description: string, websiteUrl: string) {
 

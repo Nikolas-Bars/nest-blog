@@ -4,6 +4,12 @@ import { BlogsService } from '../application/blogs.service';
 import { BlogsQueryRepository, SortDataType } from '../infrastructure/blogs.query-repository';
 import { BlogCreateModel } from './models/input/create-blog.input.model';
 import { BlogOutputModel } from './models/output/blog.output.model';
+import { PostsQueryRepository, QueryPostDataType } from '../../posts/infrastructure/posts.query-repository';
+import {
+  CreatePostInputModel,
+  CreatePostInputModelFromBlogRoute,
+} from '../../posts/api/models/input/create-post.input.model';
+import { PostsService } from '../../posts/application/posts.service';
 
 @ApiTags('Blogs')
 @Controller('Blogs')
@@ -14,11 +20,30 @@ export class BlogsController {
   constructor(
 
     blogService: BlogsService,
-    private readonly blogQueryRepository: BlogsQueryRepository
+    private readonly blogQueryRepository: BlogsQueryRepository,
+    private readonly postsQueryRepository: PostsQueryRepository,
+    private readonly postsService: PostsService
 
   ) {
     this.blogService = blogService
   }
+
+  @Get(':id/posts')
+  async getPostsByBlog(
+    @Param('id') id: string,
+    @Query() query: QueryPostDataType
+  ) {
+    console.log('dqwqwdwddw');
+    const queryData = {
+      sortBy: query.sortBy ?? 'createdAt',
+      sortDirection: query.sortDirection ?? 'desc',
+      pageNumber: query.pageNumber ? +query.pageNumber : 1,
+      pageSize: query.pageSize ? +query.pageSize : 10
+    }
+
+    return this.postsQueryRepository.getPostsByBlogId(id, queryData)
+  }
+
 
   @Get(':id')
   async getBlog(
@@ -46,6 +71,29 @@ export class BlogsController {
       pageSize: query.pageSize ? +query.pageSize : 10,
     }
     return this.blogQueryRepository.getAllBlogs(sortData)
+  }
+
+  @Post(':id/posts')
+  async createPostForBlog(
+    @Param('id') id: string,
+    @Body() createPostModel: CreatePostInputModelFromBlogRoute
+  ) {
+    console.log(id, 'idididid');
+    const blog = await this.blogQueryRepository.getBlogById(id)
+    console.log(blog, 'blogblogblog');
+    if(blog === null){
+      throw new NotFoundException('Blog not found');
+    }
+
+    const result = await this.postsService.create(
+      createPostModel.title,
+      createPostModel.shortDescription,
+      createPostModel.content,
+      id,
+      blog.name
+    )
+
+    return await this.postsQueryRepository.getPostById(result.toString())
   }
 
   @Post()
