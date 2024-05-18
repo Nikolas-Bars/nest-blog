@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Blog } from '../domain/blog.entity';
 import { Model, ObjectId, UpdateWriteOpResult } from 'mongoose';
+import { DeleteResult } from '../../../common/common-types/common-types';
 
 @Injectable()
 export class BlogsRepository {
@@ -35,9 +36,10 @@ export class BlogsRepository {
     return !!result.modifiedCount
   }
 
-  public async delete(id: string) {
-    const result = await this.blogModel.deleteOne({_id: id})
+  public async delete(id: string): Promise<boolean> {
 
-    return
+    const result:DeleteResult = await this.blogModel.deleteOne({_id: id})
+
+    return !!result.deletedCount
   }
 }

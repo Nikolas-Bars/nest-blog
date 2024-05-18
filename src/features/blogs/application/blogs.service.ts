@@ -29,7 +29,9 @@ export class BlogsService {
 
   }
 
-  async delete(id: string) {
+  async delete(id: string): Promise<boolean> {
+
     return await this.blogsRepositiry.delete(id)
+
   }
 }
