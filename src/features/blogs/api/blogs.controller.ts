@@ -34,6 +34,12 @@ export class BlogsController {
     @Query() query: QueryPostDataType
   ) {
 
+    const blog = await this.blogQueryRepository.getBlogById(id)
+
+    if(blog === null){
+      throw new NotFoundException('Blog not found');
+    }
+
     const queryData = {
       sortBy: query.sortBy ?? 'createdAt',
       sortDirection: query.sortDirection ?? 'desc',
