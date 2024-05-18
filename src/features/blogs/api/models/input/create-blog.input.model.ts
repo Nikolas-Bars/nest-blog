@@ -5,7 +5,7 @@ import { NameIsExist } from '../../../../../common/decorators/validate/name-is-e
 export class BlogCreateModel {
   @Trim()
   @IsString()
-  @Length(5, 15, {message: 'Length not correct'})
+  @Length(2, 15, {message: 'Length not correct'})
   @NameIsExist()
   name: string;
 
