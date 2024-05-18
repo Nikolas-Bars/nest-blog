@@ -9,9 +9,13 @@ export class UserCreateModel {
     @Trim()
     @IsString()
     @Length(5, 20, {message: 'Length not correct'})
-    @NameIsExist()
-    name: string;
+    // @NameIsExist()
+    login: string;
 
     @IsOptionalEmail()
     email: string;
+
+    @IsString()
+    @Length(6, 20, {message: 'Length of password is not correct'})
+    password: string
 }

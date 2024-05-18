@@ -82,14 +82,13 @@ export class PostsQueryRepository {
       if (sortBy && sortDirection) {
         sortOptions[sortBy] = sortDirection as SortOrder;
       }
-    console.log(blogId, 'blogId epta');
+
       const posts = await this.postModel
         .find({ blogId: blogId })
         .sort(sortOptions)
         .limit(pageSize)
         .skip((pageNumber - 1) * pageSize)
 
-    console.log(posts, 'posts epta');
       const totalCount = await this.postModel.countDocuments({blogId: blogId})
 
       const pagesCount = Math.ceil(totalCount / pageSize)

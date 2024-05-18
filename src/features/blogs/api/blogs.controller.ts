@@ -33,7 +33,7 @@ export class BlogsController {
     @Param('id') id: string,
     @Query() query: QueryPostDataType
   ) {
-    console.log('dqwqwdwddw');
+
     const queryData = {
       sortBy: query.sortBy ?? 'createdAt',
       sortDirection: query.sortDirection ?? 'desc',
@@ -78,9 +78,9 @@ export class BlogsController {
     @Param('id') id: string,
     @Body() createPostModel: CreatePostInputModelFromBlogRoute
   ) {
-    console.log(id, 'idididid');
+
     const blog = await this.blogQueryRepository.getBlogById(id)
-    console.log(blog, 'blogblogblog');
+
     if(blog === null){
       throw new NotFoundException('Blog not found');
     }

@@ -9,7 +9,7 @@ export type UserModelType = Model<UserDocument> & typeof statics;
 @Schema()
 export class User {
   @Prop()
-  name: string;
+  login: string;
 
   @Prop()
   email: string;
@@ -17,15 +17,15 @@ export class User {
   @Prop()
   createdAt: Date;
 
-  updateUser(name: string) {
-    this.name = name;
+  updateUser(login: string) {
+    this.login = login;
   }
 
-  static createUser(name: string, email: string | null) {
+  static createUser(login: string, email: string | null) {
     const user = new this();
 
-    user.name = name;
-    user.email = email ?? `${randomUUID()}_${name}@it-incubator.io`;
+    user.login = login;
+    user.email = email ?? `${randomUUID()}_${login}@it-incubator.io`;
 
     return user;
   }

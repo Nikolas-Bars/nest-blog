@@ -42,7 +42,6 @@ export class PostsRepository {
 
   public async delete(id: string): Promise<boolean> {
     const result: DeleteResult  = await this.postModel.deleteOne({_id: id})
-    console.log(result, '@HttpCode(204)ssdsdssdsd');
     return !!result.deletedCount
   }
 
