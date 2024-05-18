@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Blog } from '../domain/blog.entity';
-import { Model, ObjectId } from 'mongoose';
+import { Model, ObjectId, UpdateWriteOpResult } from 'mongoose';
 
 @Injectable()
 export class BlogsRepository {
@@ -29,15 +29,15 @@ export class BlogsRepository {
       description: string;
       websiteUrl: string;
     }
-  ) {
-    const result = await this.blogModel.updateOne({_id: blog.id}, {$set: {name: blog.name, description: blog.description, isMembership: false, websiteUrl: blog.websiteUrl}})
+  ): Promise<boolean> {
+    const result: UpdateWriteOpResult = await this.blogModel.updateOne({_id: blog.id}, {$set: {name: blog.name, description: blog.description, isMembership: false, websiteUrl: blog.websiteUrl}})
 
-    return true
+    return !!result.modifiedCount
   }
 
   public async delete(id: string) {
     const result = await this.blogModel.deleteOne({_id: id})
-    console.log(result);
+
     return
   }
 }

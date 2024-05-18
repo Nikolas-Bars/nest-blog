@@ -19,6 +19,11 @@ import { BlogsQueryRepository } from './features/blogs/infrastructure/blogs.quer
 import { BlogsController } from './features/blogs/api/blogs.controller';
 import { Blog, BlogSchema } from './features/blogs/domain/blog.entity';
 import { DeleteAllController } from './features/deleteAll/delete-all.controller';
+import { PostsController } from './features/posts/api/posts.controller';
+import { PostsRepository } from './features/posts/infrastructure/posts.repository';
+import { PostsService } from './features/posts/application/posts.service';
+import { PostsQueryRepository } from './features/posts/infrastructure/posts.query-repository';
+import { Post, PostSchema } from './features/posts/domain/post.entity';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -30,6 +35,12 @@ const blogsProviders: Provider[] = [
   BlogsRepository,
   BlogsService,
   BlogsQueryRepository
+]
+
+const postsProviders: Provider[] = [
+  PostsRepository,
+  PostsService,
+  PostsQueryRepository
 ]
 
 @Module({
@@ -44,12 +55,14 @@ const blogsProviders: Provider[] = [
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Blog.name, schema: BlogSchema },
+      { name: Post.name, schema: PostSchema },
       ]),
   ],
   // Регистрация провайдеров
   providers: [
     ...usersProviders,
     ...blogsProviders,
+    ...postsProviders,
     NameIsExistConstraint,
     /* {
             provide: UsersService,
@@ -70,7 +83,7 @@ const blogsProviders: Provider[] = [
         }*/
   ],
   // Регистрация контроллеров
-  controllers: [UsersController, BlogsController, DeleteAllController],
+  controllers: [UsersController, BlogsController, DeleteAllController, PostsController],
 })
 export class AppModule implements NestModule {
   // https://docs.nestjs.com/middleware#applying-middleware

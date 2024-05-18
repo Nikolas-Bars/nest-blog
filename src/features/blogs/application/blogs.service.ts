@@ -18,20 +18,17 @@ export class BlogsService {
     return result._id
   }
 
-  async update(id: string, name: string, description: string, websiteUrl: string) {
-    const result = await this.blogsRepositiry.update({
+  async update(id: string, name: string, description: string, websiteUrl: string): Promise<boolean> {
+    return await this.blogsRepositiry.update({
       id: id,
       description,
       name,
       websiteUrl
     })
 
-    return true
   }
 
   async delete(id: string) {
-    const result = await this.blogsRepositiry.delete(id)
-
-    return result
+    return await this.blogsRepositiry.delete(id)
   }
 }
