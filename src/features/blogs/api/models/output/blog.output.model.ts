@@ -9,9 +9,6 @@ export class BlogOutputModel {
   createdAt: Date;
   isMembership: boolean;
 }
-
-// MAPPERS
-
 export const BlogOutputModelMapper = (blog: BlogDocument): BlogOutputModel => {
   const outputModel = new BlogOutputModel();
 

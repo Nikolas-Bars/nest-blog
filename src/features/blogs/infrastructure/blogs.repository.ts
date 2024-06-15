@@ -31,15 +31,13 @@ export class BlogsRepository {
       websiteUrl: string;
     }
   ): Promise<boolean> {
-    const result: UpdateWriteOpResult = await this.blogModel.updateOne({_id: blog.id}, {$set: {name: blog.name, description: blog.description, isMembership: false, websiteUrl: blog.websiteUrl}})
+    const result: UpdateWriteOpResult = await this.blogModel.updateOne({_id: blog.id},
+      {$set: {name: blog.name, description: blog.description, isMembership: false, websiteUrl: blog.websiteUrl}})
 
     return !!result.modifiedCount
   }
-
   public async delete(id: string): Promise<boolean> {
-
     const result:DeleteResult = await this.blogModel.deleteOne({_id: id})
-
     return !!result.deletedCount
   }
 }
