@@ -1,23 +1,30 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Observable } from 'rxjs';
+import { UsersService } from '../../features/users/application/users.service';
+import { AuthService } from '../../features/auth/auth.service';
 
 // Custom guard
 // https://docs.nestjs.com/guards
 @Injectable()
 export class AuthGuard implements CanActivate {
+  constructor(protected usersService: UsersService, protected authService: AuthService) {}
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    if (request.query['token'] !== '123') {
-      // Если нужно выкинуть custom ошибку с кодом 401
-      // throw new UnauthorizedException();
+    const token = request.headers.authorization?.split(' ')[1];
 
-      // default error 403
-      return false;
+    if (!token) {
+      throw new UnauthorizedException('Token not found');
     }
 
-    return true;
+    try {
+      // Добавляем декодированный токен в объект запроса
+      request.user = this.authService.validateToken(token);
+      return true;
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token');
+    }
   }
 }

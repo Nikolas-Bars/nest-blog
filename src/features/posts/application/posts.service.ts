@@ -12,7 +12,8 @@ export class PostsService {
     private blogsRepository: BlogsQueryRepository
   ) {}
 
-  async create(title: string, shortDescription: string, content: string, blogId:  string, blogName: string) {
+  async create(title: string, shortDescription: string, content: string,
+               blogId:  string, blogName: string) {
 
     const result = await this.postsRepository.insert({
       title,

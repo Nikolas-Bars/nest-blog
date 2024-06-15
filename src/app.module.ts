@@ -24,6 +24,10 @@ import { PostsRepository } from './features/posts/infrastructure/posts.repositor
 import { PostsService } from './features/posts/application/posts.service';
 import { PostsQueryRepository } from './features/posts/infrastructure/posts.query-repository';
 import { Post, PostSchema } from './features/posts/domain/post.entity';
+import { AuthService } from './features/auth/auth.service';
+import { AuthController } from './features/auth/auth.controller';
+import { JwtService } from '@nestjs/jwt';
+import { CreateUserPipe } from './infrastructure/pipes/create.user.pipe';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -41,6 +45,10 @@ const postsProviders: Provider[] = [
   PostsRepository,
   PostsService,
   PostsQueryRepository
+]
+
+const authProviders: Provider[] = [
+  AuthService
 ]
 
 @Module({
@@ -63,6 +71,9 @@ const postsProviders: Provider[] = [
     ...usersProviders,
     ...blogsProviders,
     ...postsProviders,
+    AuthService,
+    JwtService,
+    CreateUserPipe,
     NameIsExistConstraint,
     /* {
             provide: UsersService,
@@ -83,7 +94,7 @@ const postsProviders: Provider[] = [
         }*/
   ],
   // Регистрация контроллеров
-  controllers: [UsersController, BlogsController, DeleteAllController, PostsController],
+  controllers: [UsersController, BlogsController, DeleteAllController, PostsController, AuthController],
 })
 export class AppModule implements NestModule {
   // https://docs.nestjs.com/middleware#applying-middleware

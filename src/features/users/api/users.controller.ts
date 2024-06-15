@@ -4,29 +4,26 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode, NotFoundException,
+  HttpCode,
+  NotFoundException,
   Param,
-  ParseIntPipe,
   Post,
   Query,
-  Req,
-  Res,
-  UseGuards,
+  UseGuards, UsePipes,
 } from '@nestjs/common';
 import { UsersQueryRepository } from '../infrastructure/users.query-repository';
 import { UserCreateModel } from './models/input/create-user.input.model';
 import { UserOutputModel } from './models/output/user.output.model';
 import { UsersService } from '../application/users.service';
-import { NumberPipe } from '../../../common/pipes/number.pipe';
-import { AuthGuard } from '../../../common/guards/auth.guard';
-import { Request, Response } from 'express';
 import { QueryUserDataType } from './models/types/users-types';
+import { BasicAuthGuard } from '../../../common/guards/basic.auth.guard';
+import { CreateUserPipe } from '../../../infrastructure/pipes/create.user.pipe';
 
 // Tag для swagger
 @ApiTags('Users')
 @Controller('users')
 // Установка guard на весь контроллер
-//@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 export class UsersController {
   usersService: UsersService;
   constructor(
@@ -39,6 +36,8 @@ export class UsersController {
   @Post()
   // Для переопределения default статус кода https://docs.nestjs.com/controllers#status-code
   @HttpCode(201)
+  @UseGuards(BasicAuthGuard)
+  @UsePipes(CreateUserPipe)
   async create(@Body() createModel: UserCreateModel): Promise<UserOutputModel> {
     const result = await this.usersService.create(
       createModel.email,
@@ -74,7 +73,6 @@ export class UsersController {
     @Param('id') id: string
   ) {
     const result = await this.usersService.deleteUser(id)
-
     if(!result){
       throw new NotFoundException('Post not found');
     }
