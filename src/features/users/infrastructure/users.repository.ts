@@ -6,19 +6,25 @@ import { DeleteResult } from '../../../common/common-types/common-types';
 import { UserDbType } from '../api/models/types/users-types';
 import { WithId } from 'mongodb';
 
+type InsertUserType = {
+  email: string;
+  login: string;
+  password:  string;
+  salt: string,
+  createdAt: string;
+  emailConfirmation: {
+    isConfirmed: boolean
+  }
+}
+
 @Injectable()
 export class UsersRepository {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  public async insert(user: {
-    email: string;
-    login: string;
-    password:  string;
-    salt: string,
-    createdAt: string;
-  }) {
+  public async insert(user: InsertUserType) {
 
     const result = await this.userModel.insertMany(user);
+
     return result[0];
 
   }

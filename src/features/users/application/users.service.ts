@@ -19,6 +19,9 @@ export class UsersService {
       password: passwordHash,
       salt,
       createdAt: new Date().toISOString(),
+      emailConfirmation: {
+        isConfirmed: true
+      }
     });
     // await this.sendMessageOnEmail(email);
 

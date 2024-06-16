@@ -7,7 +7,7 @@ import {skipSettings} from './utils/skip-settings';
 import {aDescribe} from './utils/aDescribe';
 import {UserServiceMock} from './mock/user.service.mock';
 import {UsersTestManager} from './utils/users-test-manager';
-import {UserCreateModel} from '../src/features/users/api/models/input/create-user.input.model';
+import {UserCreateModelDto} from '../src/features/users/api/models/input/create-user.input.model';
 
 const TEST_ADMIN_CREDENTIALS = {
     login: 'test',
@@ -75,7 +75,7 @@ aDescribe(skipSettings.for('appTests'))('AppController (e2e)', () => {
         // Work with state
         const {adminTokens} = expect.getState();
 
-        const createModel: UserCreateModel = {
+        const createModel: UserCreateModelDto = {
             name: 'qwerty',
             email: 'some-email@gg.cc',
         };
