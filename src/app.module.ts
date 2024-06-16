@@ -26,7 +26,7 @@ import { PostsQueryRepository } from './features/posts/infrastructure/posts.quer
 import { Post, PostSchema } from './features/posts/domain/post.entity';
 import { AuthService } from './features/auth/auth.service';
 import { AuthController } from './features/auth/auth.controller';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { CreateUserPipe } from './infrastructure/pipes/create.user.pipe';
 
 const usersProviders: Provider[] = [
@@ -65,6 +65,10 @@ const authProviders: Provider[] = [
       { name: Blog.name, schema: BlogSchema },
       { name: Post.name, schema: PostSchema },
       ]),
+    JwtModule.register({
+      secret: '4815162342', // Замени на свой секретный ключ
+      signOptions: { expiresIn: '5h' }, // Настройки времени жизни токена
+    }),
   ],
   // Регистрация провайдеров
   providers: [
@@ -72,7 +76,6 @@ const authProviders: Provider[] = [
     ...blogsProviders,
     ...postsProviders,
     AuthService,
-    JwtService,
     CreateUserPipe,
     NameIsExistConstraint,
     /* {

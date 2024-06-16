@@ -12,7 +12,7 @@ import {
   UseGuards, UsePipes,
 } from '@nestjs/common';
 import { UsersQueryRepository } from '../infrastructure/users.query-repository';
-import { UserCreateModel } from './models/input/create-user.input.model';
+import { UserCreateModelDto } from './models/input/create-user.input.model';
 import { UserOutputModel } from './models/output/user.output.model';
 import { UsersService } from '../application/users.service';
 import { QueryUserDataType } from './models/types/users-types';
@@ -38,7 +38,7 @@ export class UsersController {
   @HttpCode(201)
   @UseGuards(BasicAuthGuard)
   @UsePipes(CreateUserPipe)
-  async create(@Body() createModel: UserCreateModel): Promise<UserOutputModel> {
+  async create(@Body() createModel: UserCreateModelDto): Promise<UserOutputModel> {
     const result = await this.usersService.create(
       createModel.email,
       createModel.login,
@@ -55,6 +55,7 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(BasicAuthGuard)
   async getUsers(@Query() query: QueryUserDataType ) {
     const sortData = {
       sortBy: query.sortBy ?? 'createdAt',
@@ -68,6 +69,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @UseGuards(BasicAuthGuard)
   @HttpCode(204)
   async deletePost(
     @Param('id') id: string
