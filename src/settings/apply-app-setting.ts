@@ -77,19 +77,14 @@ const setAppPipes = (app: INestApplication) => {
       exceptionFactory: (errors) => {
         const customErrors = [];
 
-        console.log(errors, 'errors01')
-
         errors.forEach((e) => {
           const constraintKeys = Object.keys(e.constraints as any);
-
-
-          console.log(e.constraints, 'e.constraints')
 
           constraintKeys.forEach((cKey) => {
             const msg = e.constraints?.[cKey] as any;
 
             // @ts-ignore
-            customErrors.push({ key: e.property, message: msg });
+            customErrors.push({ message: msg, field: e.property });
           });
         });
 
