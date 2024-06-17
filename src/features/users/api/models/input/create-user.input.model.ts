@@ -5,7 +5,7 @@ import {IsOptionalEmail} from '../../../../../common/decorators/validate/is-opti
 export class UserCreateModelDto {
     @Trim()
     @IsString()
-    @Length(5, 20, {message: 'Length not correct'})
+    @Length(5, 20, {message: 'Fucking length of login is not correct'})
     login: string;
 
     @IsOptionalEmail()
