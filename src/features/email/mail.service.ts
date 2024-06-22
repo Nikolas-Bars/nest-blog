@@ -26,7 +26,6 @@ export class MailService {
         pass: 'uybtwkdqvbetsvmm'
       }
     })
-
     let info = await transporter.sendMail({
       from: 'Nikolas Bars <docum.magic0@gmail.com>',
       to: email,
