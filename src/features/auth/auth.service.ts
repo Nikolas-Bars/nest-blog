@@ -90,12 +90,11 @@ export class AuthService {
         minutes: 30
       })
 
-      // Функция для задержки - проверяю тесты
       const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-      console.log(1, 'delay');
+
       await delay(5000);
-      console.log(2, 'delay');
+
 
       await this.usersRepository.updateConfirmationCode(user._id.toString(), newCode, newExpirationDate)
 

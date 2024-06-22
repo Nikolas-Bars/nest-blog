@@ -31,6 +31,7 @@ import { CreateUserPipe } from './infrastructure/pipes/create.user.pipe';
 import { MailService } from './features/email/mail.service';
 import { LoginIsExistDecorator } from './common/decorators/validate/login-is-exist.decorator';
 import { EmailIsExistDecorator } from './common/decorators/validate/email-is-exist.decorator';
+import { ConfirmCodePipe } from './infrastructure/pipes/confirm.code.pipe';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -81,6 +82,7 @@ const authProviders: Provider[] = [
     AuthService,
     MailService,
     CreateUserPipe,
+    ConfirmCodePipe,
     NameIsExistConstraint,
     LoginIsExistDecorator,
     EmailIsExistDecorator,

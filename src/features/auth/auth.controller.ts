@@ -13,6 +13,7 @@ import { InputAuthModel, RegistrationDataType } from './models/input.auth.model'
 import { Response } from 'express';
 import { UserCreateModelDto } from '../users/api/models/input/create-user.input.model';
 import { CreateUserPipe } from '../../infrastructure/pipes/create.user.pipe';
+import { ConfirmCodePipe } from '../../infrastructure/pipes/confirm.code.pipe';
 
 @Controller('auth')
 export class AuthController {
@@ -51,6 +52,7 @@ export class AuthController {
   }
 
   @HttpCode(204)
+  @UsePipes(ConfirmCodePipe)
   @Post('registration-confirmation')
   async confirmationCode(@Body() body: {code: string}) {
 
