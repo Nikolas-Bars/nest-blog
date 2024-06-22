@@ -51,12 +51,24 @@ export class AuthController {
   }
 
   @HttpCode(204)
+  @Post('registration-confirmation')
+  async confirmationCode(@Body() body: {code: string}) {
+
+    const code = body.code
+
+    const result = await this.authService.confirmEmail(code)
+
+    if (!result) throw new BadRequestException()
+
+  }
+
+  @HttpCode(204)
   @Post('registration-email-resending')
   async resendingCode(@Body() body: {email: string}) {
 
     const result: string | null = await this.authService.resendConfirmationCode(body.email)
 
-    if (!result) throw new BadRequestException()
+    if (!result) throw new BadRequestException([{ message: 'User with this email not found', field: "email" }])
 
   }
 

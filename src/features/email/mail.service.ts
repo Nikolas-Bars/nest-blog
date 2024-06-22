@@ -10,6 +10,8 @@ export class MailService {
 
     const message = ` <h1>Thank for your registration</h1><a href=\'https://blog-t57v.onrender.com/confirm-email?code=${code}\'>complete registration</a>`
 
+    console.log(code, '- code')
+
     const result: string | null = await this.sendEmail(email, subject, message)
 
     return result

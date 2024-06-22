@@ -104,6 +104,32 @@ export class AuthService {
     }
   }
 
+  async confirmEmail(code: string) {
+
+    try {
+
+      const user = await this.usersRepository.getUserByConfirmCode(code)
+
+      if (user && user.emailConfirmation && user.emailConfirmation.expirationDate > new Date() && !user.emailConfirmation.isConfirmed) {
+
+        const id = user._id.toString()
+
+        const result = await this.usersRepository.confirmEmail(id)
+
+        return result ? result : null
+
+      } else {
+        return null
+      }
+
+    } catch (e) {
+      console.error(e)
+
+      return null
+    }
+
+  }
+
   async checkPassword(password: string, passwordHash: string) {
 
     return await bcrypt.compare(password, passwordHash)
