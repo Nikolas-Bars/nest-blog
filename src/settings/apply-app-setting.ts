@@ -75,8 +75,8 @@ const setAppPipes = (app: INestApplication) => {
       stopAtFirstError: true,
       // Перехватываем ошибку, кастомизируем её и выкидываем 400 с собранными данными
       exceptionFactory: (errors) => {
+        console.log(22);
         const customErrors = [];
-
         errors.forEach((e) => {
           const constraintKeys = Object.keys(e.constraints as any);
 
