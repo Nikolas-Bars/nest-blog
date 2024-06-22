@@ -23,11 +23,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
       const responseBody: any = exception.getResponse();
 
       if (Array.isArray(responseBody.message)) {
+        console.log(1, responseBody.message);
         responseBody.message.forEach((e) =>
             // @ts-ignore
           errorsResponse.errorsMessages.push(e),
         );
       } else {
+        console.log(2, responseBody.message);
         // @ts-ignore
         errorsResponse.errorsMessages.push(responseBody.message);
       }

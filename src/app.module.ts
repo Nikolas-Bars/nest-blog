@@ -29,6 +29,8 @@ import { AuthController } from './features/auth/auth.controller';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { CreateUserPipe } from './infrastructure/pipes/create.user.pipe';
 import { MailService } from './features/email/mail.service';
+import { LoginIsExistDecorator } from './common/decorators/validate/login-is-exist.decorator';
+import { EmailIsExistDecorator } from './common/decorators/validate/email-is-exist.decorator';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -80,6 +82,8 @@ const authProviders: Provider[] = [
     MailService,
     CreateUserPipe,
     NameIsExistConstraint,
+    LoginIsExistDecorator,
+    EmailIsExistDecorator,
     /* {
             provide: UsersService,
             useClass: UsersService,

@@ -1,8 +1,18 @@
 import { AuthService } from './auth.service';
-import { BadRequestException, Body, Controller, HttpCode, Post, Res, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  Res,
+  UnauthorizedException,
+  UsePipes,
+} from '@nestjs/common';
 import { InputAuthModel, RegistrationDataType } from './models/input.auth.model';
 import { Response } from 'express';
 import { UserCreateModelDto } from '../users/api/models/input/create-user.input.model';
+import { CreateUserPipe } from '../../infrastructure/pipes/create.user.pipe';
 
 @Controller('auth')
 export class AuthController {
@@ -30,11 +40,22 @@ export class AuthController {
 
   @HttpCode(204)
   @Post('registration')
+  @UsePipes(CreateUserPipe)
   async registration(@Body() data: UserCreateModelDto) {
 
     const result = await this.authService.registerUser(data)
 
     // если существует пользователь то возвращаем 400
+    if (!result) throw new BadRequestException()
+
+  }
+
+  @HttpCode(204)
+  @Post('registration-email-resending')
+  async resendingCode(@Body() body: {email: string}) {
+
+    const result: string | null = await this.authService.resendConfirmationCode(body.email)
+
     if (!result) throw new BadRequestException()
 
   }

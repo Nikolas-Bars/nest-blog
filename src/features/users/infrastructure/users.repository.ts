@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, UpdateWriteOpResult } from 'mongoose';
 import { User } from '../domain/user.entity';
 import { DeleteResult } from '../../../common/common-types/common-types';
 import { UserDbType } from '../api/models/types/users-types';
-import { WithId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 
 type InsertUserType = {
   email: string;
@@ -44,6 +44,21 @@ export class UsersRepository {
     const byEmail = await this.userModel.findOne({ email: email })
 
     return !!byEmail || !!byLogin
+  }
+  public async updateConfirmationCode(id: string, code: string, newExpirationDate: Date) {
+    try {
+      // worked
+      const result: UpdateWriteOpResult = await this.userModel.updateOne({ _id: new ObjectId(id) }, {$set: {'emailConfirmation.confirmationCode': code, 'emailConfirmation.expirationDate': newExpirationDate}})
+
+      return result.modifiedCount ? result.modifiedCount : null
+
+    } catch (e) {
+
+      console.error(e)
+
+      return null
+
+    }
   }
   public async findByLoginOrEmail(loginOrEmail): Promise<WithId<UserDbType> | null> {
     const result = await this.userModel.findOne({

@@ -78,6 +78,32 @@ export class AuthService {
 
   }
 
+  async resendConfirmationCode(email: string): Promise<string | null> {
+    const user: WithId<UserDbType> | null = await this.usersRepository.findByLoginOrEmail(email)
+
+    if (user && user.emailConfirmation) {
+
+      const newCode = v1()
+
+      const newExpirationDate = add.add(new Date(), {
+        hours: 1,
+        minutes: 30
+      })
+
+      await this.usersRepository.updateConfirmationCode(user._id.toString(), newCode, newExpirationDate)
+
+      const isConfirmed = user.emailConfirmation.isConfirmed
+
+      if (isConfirmed) return null // если email уже подтвержден
+      // если не подтвержден - отправляем письмо заново
+
+      return await MailService.sendEmailConfirmationMassage(user.email, 'Resending code', newCode)
+
+    } else {
+      return null
+    }
+  }
+
   async checkPassword(password: string, passwordHash: string) {
 
     return await bcrypt.compare(password, passwordHash)
