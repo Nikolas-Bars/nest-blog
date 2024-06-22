@@ -12,7 +12,7 @@ type InsertUserType = {
   password:  string;
   salt: string,
   createdAt: string;
-  emailConfirmation: {
+  emailConfirmation?: {
     isConfirmed: boolean
   }
 }

@@ -31,7 +31,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
         // @ts-ignore
         errorsResponse.errorsMessages.push(responseBody.message);
       }
-      console.log(responseBody, 'responseBody');
       response.status(status).send(errorsResponse);
     } else {
       response.status(status).json({

@@ -1,7 +1,8 @@
 import { AuthService } from './auth.service';
 import { BadRequestException, Body, Controller, HttpCode, Post, Res, UnauthorizedException } from '@nestjs/common';
-import { InputAuthModel } from './models/input.auth.model';
+import { InputAuthModel, RegistrationDataType } from './models/input.auth.model';
 import { Response } from 'express';
+import { UserCreateModelDto } from '../users/api/models/input/create-user.input.model';
 
 @Controller('auth')
 export class AuthController {
@@ -26,6 +27,18 @@ export class AuthController {
       accessToken: tokens.accessToken
     })
   }
+
+  @HttpCode(204)
+  @Post('registration')
+  async registration(@Body() data: UserCreateModelDto) {
+
+    const result = await this.authService.registerUser(data)
+
+    // если существует пользователь то возвращаем 400
+    if (!result) throw new BadRequestException()
+
+  }
+
   @Post('protected')
   async protectedResource(@Body() body: { token: string }): Promise<any> {
     try {

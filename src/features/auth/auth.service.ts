@@ -3,14 +3,20 @@ import bcrypt from "bcrypt";
 import { UsersRepository } from '../users/infrastructure/users.repository';
 import { UserDbType } from '../users/api/models/types/users-types';
 import { WithId } from 'mongodb';
+import {v1} from "uuid";
+import add from "date-fns/add"
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { RegistrationDataType } from './models/input.auth.model';
+import { UsersService } from '../users/application/users.service';
+import { MailService } from '../email/mail.service';
 
 @Injectable()
 export class AuthService {
 
   constructor(
     private usersRepository: UsersRepository,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private usersService: UsersService
   ) {}
 
   async login(loginOrEmail: string, password: string): Promise<{accessToken: string} | null> {
@@ -28,6 +34,48 @@ export class AuthService {
     const accessToken = await this.jwtService.sign({userId: user._id})
 
     return {accessToken}
+  }
+
+  async registerUser(data: RegistrationDataType) {
+
+    const {login, email, password} = data
+
+    // проверяем существует ли пользователь
+    const user = await this.usersRepository.findByLoginOrEmail(data.login) as WithId<UserDbType>
+
+    if (user) return null
+
+    const salt = await bcrypt.genSalt(10)
+
+    const passwordHash = await this.usersService._generateHash(password, salt)
+
+    const newUser = {
+      email: data.email,
+      login: data.login,
+      password: passwordHash,
+      salt: salt,
+      createdAt: (new Date).toISOString(),
+      emailConfirmation: {
+        // confirmationCode - код который уйдет пользователю
+        confirmationCode: v1(),
+        // expirationDate - дата когда код устареет
+        expirationDate: add.add(new Date(), {
+          hours: 1,
+          minutes: 30
+        }),
+        isConfirmed: false
+      }
+    }
+
+    // записываем нового пользователя в базу и получаем его id
+    const createdId = await this.usersRepository.insert(newUser as UserDbType)
+    if (createdId) {
+      // отправляем email на почту с кодом подтверждения
+      return await MailService.sendEmailConfirmationMassage(newUser.email, 'Registration new user', newUser.emailConfirmation.confirmationCode)
+    }
+
+    return null
+
   }
 
   async checkPassword(password: string, passwordHash: string) {

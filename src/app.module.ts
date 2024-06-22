@@ -28,6 +28,7 @@ import { AuthService } from './features/auth/auth.service';
 import { AuthController } from './features/auth/auth.controller';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { CreateUserPipe } from './infrastructure/pipes/create.user.pipe';
+import { MailService } from './features/email/mail.service';
 
 const usersProviders: Provider[] = [
   UsersRepository,
@@ -76,6 +77,7 @@ const authProviders: Provider[] = [
     ...blogsProviders,
     ...postsProviders,
     AuthService,
+    MailService,
     CreateUserPipe,
     NameIsExistConstraint,
     /* {
