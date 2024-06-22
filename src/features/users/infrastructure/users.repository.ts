@@ -47,7 +47,7 @@ export class UsersRepository {
   }
   public async updateConfirmationCode(id: string, code: string, newExpirationDate: Date) {
     try {
-      // worked
+
       const result: UpdateWriteOpResult = await this.userModel.updateOne({ _id: new ObjectId(id) }, {$set: {'emailConfirmation.confirmationCode': code, 'emailConfirmation.expirationDate': newExpirationDate}})
 
       return result.modifiedCount ? result.modifiedCount : null
@@ -59,6 +59,35 @@ export class UsersRepository {
       return null
 
     }
+  }
+  async getUserByConfirmCode(code: string): Promise<WithId<UserDbType> | null> {
+    try {
+
+      return await this.userModel.findOne({'emailConfirmation.confirmationCode': code})
+
+    } catch (e) {
+
+      console.error(e)
+
+      return null
+
+    }
+  }
+  async confirmEmail(id: string): Promise<boolean> {
+    try {
+
+      const result: UpdateWriteOpResult = await this.userModel.updateOne({_id: new ObjectId(id)}, {$set: {'emailConfirmation.isConfirmed': true}})
+
+      return !!result.modifiedCount
+
+    } catch (e) {
+
+      console.error(e)
+
+      return false
+
+    }
+
   }
   public async findByLoginOrEmail(loginOrEmail): Promise<WithId<UserDbType> | null> {
     const result = await this.userModel.findOne({
