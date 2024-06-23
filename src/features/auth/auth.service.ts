@@ -71,7 +71,13 @@ export class AuthService {
     const createdId = await this.usersRepository.insert(newUser as UserDbType)
     if (createdId) {
       // отправляем email на почту с кодом подтверждения
-      return await MailService.sendEmailConfirmationMassage(newUser.email, 'Registration new user', newUser.emailConfirmation.confirmationCode)
+      const result = await MailService.sendEmailConfirmationMassage(newUser.email, 'Registration new user', newUser.emailConfirmation.confirmationCode)
+
+      const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+      await delay(2000);
+
+      return result
     }
 
     return null
@@ -93,7 +99,7 @@ export class AuthService {
       const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 
-      await delay(2000);
+      await delay(3000);
 
 
       await this.usersRepository.updateConfirmationCode(user._id.toString(), newCode, newExpirationDate)
