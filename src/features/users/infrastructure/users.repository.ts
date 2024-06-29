@@ -103,4 +103,43 @@ export class UsersRepository {
       return null
     }
   }
+  async getUserByRecoveryCode(code: string): Promise<WithId<UserDbType> | null> {
+    try {
+
+      return await await this.userModel.findOne({'emailConfirmation.recoveryCode': code})
+
+    } catch (e) {
+
+      console.error(e)
+
+      return null
+
+    }
+  }
+  async updatePassword(userId: string, password: string): Promise<boolean> {
+    try {
+      const result: UpdateWriteOpResult = await this.userModel.updateOne({_id: new ObjectId(userId)}, {$set: {password: password}})
+
+      return !!result.modifiedCount
+
+    } catch (e) {
+      console.error(e)
+
+      return false
+    }
+
+  }
+  async updateRecoveryCode(userId: string, code: string, newExpirationDate: Date) {
+    try {
+
+      const result: UpdateWriteOpResult = await this.userModel.updateOne({ _id: new ObjectId(userId) }, {$set: {'emailConfirmation.recoveryCode': code, 'emailConfirmation.expirationRecoveryDate': newExpirationDate}})
+
+      return result.modifiedCount ? result.modifiedCount : null
+
+    } catch (e) {
+      console.error(e)
+
+      return null
+    }
+  }
 }

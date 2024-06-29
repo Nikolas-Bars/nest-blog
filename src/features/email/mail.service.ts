@@ -35,4 +35,11 @@ export class MailService {
 
     return info ? info.messageId : null
   }
+
+  static async sendRecoveryMail(email: string, subject: string, code: string) {
+
+    const message = ` <h1>Password recovery</h1><a href=\'https://blog-t57v.onrender.com/password-recovery?recoveryCode=${code}\'>recovery password</a>`
+
+    return await this.sendEmail(email, subject, message)
+  }
 }
