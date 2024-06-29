@@ -116,6 +116,35 @@ export class AuthService {
     }
   }
 
+  async checkRecoveryCode(code: string, password: string) {
+
+    try {
+
+      const user = await this.usersRepository.getUserByRecoveryCode(code)
+
+      if (user && user.emailConfirmation && user.emailConfirmation.expirationRecoveryDate > new Date()) {
+
+        // создаем хэш пароля
+        const salt = await bcrypt.genSalt(10)
+
+        const passwordHash = await this.usersService._generateHash(password, salt)
+
+        const result = await this.usersRepository.updatePassword(user._id.toString(), passwordHash)
+
+        return result ? result : null
+
+      } else {
+        return null
+      }
+
+    } catch (e) {
+      console.error(e)
+
+      return null
+    }
+
+  }
+
   async confirmEmail(code: string) {
 
     try {
@@ -147,6 +176,35 @@ export class AuthService {
     return await bcrypt.compare(password, passwordHash)
 
   }
+  async sendRecoveryCode(email: string, userId: string) {
+
+    try {
+
+      const recoveryCode = v1()
+
+      const result = await MailService.sendRecoveryMail(email, 'Recovery code', recoveryCode)
+
+      if (!result) return null
+
+      const exp = add.add(new Date(), {
+        minutes: 3
+      })
+
+      await this.usersRepository.updateRecoveryCode(userId, recoveryCode, exp)
+
+      return result
+
+    } catch (e) {
+
+      console.error(e)
+
+      return null
+
+    }
+
+
+  }
+
 
   async validateToken(token: string): Promise<any> {
     try {

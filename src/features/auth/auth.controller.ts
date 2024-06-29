@@ -14,11 +14,17 @@ import { Response } from 'express';
 import { UserCreateModelDto } from '../users/api/models/input/create-user.input.model';
 import { CreateUserPipe } from '../../infrastructure/pipes/create.user.pipe';
 import { ConfirmCodePipe } from '../../infrastructure/pipes/confirm.code.pipe';
+import { UsersRepository } from '../users/infrastructure/users.repository';
+import { RecoveryInputDto } from './models/recovery-password.model';
+import { NewPasswordInputDto } from './models/new-password.model';
 
 @Controller('auth')
 export class AuthController {
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersRepository: UsersRepository
+    ) {}
   @Post('/login')
   @HttpCode(200)
   async login(@Body() body: InputAuthModel, @Res() res: Response) {
@@ -71,6 +77,35 @@ export class AuthController {
     const result: string | null = await this.authService.resendConfirmationCode(body.email)
 
     if (!result) throw new BadRequestException([{ message: 'User with this email not found', field: "email" }])
+
+  }
+
+  // Забыли пароль? Значит сюда.
+  @HttpCode(204)
+  @Post('password-recovery')
+  async recoveryPassword(@Body() body: RecoveryInputDto) {
+
+    const user = await this.usersRepository.findByLoginOrEmail(body.email)
+
+    if (user) {
+      await this.authService.sendRecoveryCode(body.email, user._id.toString())
+    }
+
+  }
+  // А потом сюда, когда уже получили на почту код подтверждения.
+  @HttpCode(204)
+  @Post('new-password')
+  async newPassword(@Body() body: NewPasswordInputDto) {
+
+    const recoveryCode = body.recoveryCode
+
+    const newPassword = body.newPassword
+
+    const result = await this.authService.checkRecoveryCode(recoveryCode, newPassword)
+
+    if (!result) {
+      throw new BadRequestException([{ message: 'Fuck! Something went wrong'}])
+    }
 
   }
 
